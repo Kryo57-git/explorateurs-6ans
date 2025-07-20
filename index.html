@@ -20,7 +20,7 @@
 </head>
 <body>
 
-<!-- ÉCRAN DE DÉMARRAGE -->
+<!-- ÉCRAN CHOIX THÈME -->
 <div id="start" style="position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bleu);display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff;font-size:7vmin;z-index:999">
   Choisis ton thème :
   <div id="themeZone" style="display:flex;gap:20px;margin-top:20px"></div>
@@ -62,4 +62,175 @@ const niveaux = [
   /* VILLE – 10 */
   {theme:'🏪 Ville',type:'tap', consigne:'Touche le feu rouge', items:['🚦','🛑','⚠️'], bon:'🚦'},
   {theme:'🏪 Ville',type:'tap', consigne:'Touche l’hôpital', items:['🏥','🏨','🏢'], bon:'🏥'},
-  {theme:'🏪 Ville',type:'tri', consigne:'Mets les véhicules du plus lent au plus rapide', items:['🚲','🚗','✈️'], bon:['🚲','🚗','
+  {theme:'🏪 Ville',type:'tri', consigne:'Mets les véhicules du plus lent au plus rapide', items:['🚲','🚗','✈️'], bon:['🚲','🚗','✈️']},
+  {theme:'🏪 Ville',type:'calc', consigne:'4 bus + 3 bus = ?', items:['6','7','8'], bon:'7'},
+  {theme:'🏪 Ville',type:'calc', consigne:'9 pains – 3 pains = ?', items:['5','6','7'], bon:'6'},
+  {theme:'🏪 Ville',type:'memo', consigne:'Retrouve le boulanger', items:['👨‍🍳','👩‍🌾','👨‍🍞','👷'], bon:'👨‍🍞'},
+  {theme:'🏪 Ville',type:'tap', consigne:'Touche le camion de pompiers', items:['🚒','🚓','🚑'], bon:'🚒'},
+  {theme:'🏪 Ville',type:'tap', consigne:'Touche la maison', items:['🏠','🏭','🏢'], bon:'🏠'},
+  {theme:'🏪 Ville',type:'tri', consigne:'Mets les métiers du plus tôt au plus tard', items:['👩‍🍳','👮','👩‍🎨'], bon:['👩‍🍳','👮','👩‍🎨']},
+  {theme:'🏪 Ville',type:'calc', consigne:'5 livreurs + 0 livreurs = ?', items:['4','5','6'], bon:'5'},
+
+  /* NATURE – 10 */
+  {theme:'🌱 Nature',type:'tap', consigne:'Touche l’arbre', items:['🌳','🌲','🌴'], bon:'🌳'},
+  {theme:'🌱 Nature',type:'tap', consigne:'Touche la fleur', items:['🌷','🌿','🌱'], bon:'🌷'},
+  {theme:'🌱 Nature',type:'tri', consigne:'Mets les saisons dans l’ordre', items:['🍂','☀️','❄️'], bon:['☀️','🍂','❄️']},
+  {theme:'🌱 Nature',type:'calc', consigne:'6 graines + 4 graines = ?', items:['9','10','11'], bon:'10'},
+  {theme:'🌱 Nature',type:'calc', consigne:'12 feuilles – 7 feuilles = ?', items:['4','5','6'], bon:'5'},
+  {theme:'🌱 Nature',type:'memo', consigne:'Retrouve le fruit rouge', items:['🍓','🍌','🍇','🍉'], bon:'🍓'},
+  {theme:'🌱 Nature',type:'tap', consigne:'Touche le soleil', items:['☀️','🌤️','🌦️'], bon:'☀️'},
+  {theme:'🌱 Nature',type:'tri', consigne:'Mets les mois du printemps', items:['🌸','🌞','🍂'], bon:['🌸','🌞']},
+  {theme:'🌱 Nature',type:'calc', consigne:'3 pommes + 2 poires = ? fruits', items:['4','5','6'], bon:'5'},
+  {theme:'🌱 Nature',type:'memo', consigne:'Retrouve la lune', items:['🌑','🌒','🌓','🌕'], bon:'🌕'},
+
+  /* TRANSPORTS – 10 */
+  {theme:'🚂 Transports',type:'tap', consigne:'Touche le train', items:['🚂','🚌','🚁'], bon:'🚂'},
+  {theme:'🚂 Transports',type:'tap', consigne:'Touche le bateau', items:['🛳️','⛵','🚤'], bon:'⛵'},
+  {theme:'🚂 Transports',type:'tri', consigne:'Mets les véhicules du plus léger au plus lourd', items:['🛴','🚲','🚚'], bon:['🛴','🚲','🚚']},
+  {theme:'🚂 Transports',type:'calc', consigne:'4 avions + 3 avions = ?', items:['6','7','8'], bon:'7'},
+  {theme:'🚂 Transports',type:'calc', consigne:'10 vélos – 4 vélos = ?', items:['5','6','7'], bon:'6'},
+  {theme:'🚂 Transports',type:'memo', consigne:'Retrouve le scooter', items:['🛵','🏍️','🚲','🚗'], bon:'🛵'},
+  {theme:'🚂 Transports',type:'tap', consigne:'Touche l’hélicoptère', items:['🚁','✈️','🛸'], bon:'🚁'},
+  {theme:'🚂 Transports',type:'tap', consigne:'Touche le sous-marin', items:['🛳️','🚤','🚢'], bon:'🚢'},
+  {theme:'🚂 Transports',type:'tri', consigne:'Mets les transports du plus ancien au plus moderne', items:['🚂','🚗','🚀'], bon:['🚂','🚗','🚀']},
+  {theme:'🚂 Transports',type:'calc', consigne:'9 cars + 0 cars = ?', items:['8','9','10'], bon:'9'}
+];
+
+/* regroupement par thème */
+const THEMES = {
+  '🐯 Animaux':   niveaux.filter(n=>n.theme==='🐯 Animaux'),
+  '🚀 Espace':    niveaux.filter(n=>n.theme==='🚀 Espace'),
+  '🏪 Ville':     niveaux.filter(n=>n.theme==='🏪 Ville'),
+  '🌱 Nature':    niveaux.filter(n=>n.theme==='🌱 Nature'),
+  '🚂 Transports':niveaux.filter(n=>n.theme==='🚂 Transports')
+};
+
+let etat = JSON.parse(localStorage.getItem('progres')) || {theme:'',niveau:0,etoiles:[]};
+
+/* ---------- UTILITAIRES ---------- */
+const $ = id => document.getElementById(id);
+function parle(txt){
+  speechSynthesis.cancel();
+  speechSynthesis.speak(new SpeechSynthesisUtterance(txt));
+}
+function sauve(){
+  localStorage.setItem('progres',JSON.stringify(etat));
+}
+
+/* ---------- ÉCRAN CHOIX THÈME ---------- */
+function choixTheme(){
+  $('start').style.display='flex';
+  $('#themeZone').innerHTML='';
+  Object.keys(THEMES).forEach(th=>{
+    const btn=document.createElement('div');
+    btn.className='card';
+    btn.textContent=th;
+    btn.onclick=()=>{
+      etat.theme=th;
+      etat.niveau=0;
+      sauve();
+      $('start').style.display='none';
+      lanceNiveau();
+    };
+    $('#themeZone').appendChild(btn);
+  });
+}
+
+/* ---------- AFFICHAGE ---------- */
+function afficheMessage(html,cb){
+  $('msg').innerHTML = html + '<br><button onclick="suite()">OK</button>';
+  $('msg').classList.remove('hidden');
+  function suite(){ $('msg').classList.add('hidden'); cb(); }
+}
+
+function lanceNiveau(){
+  const n = THEMES[etat.theme][etat.niveau];
+  $('title').textContent = `Niveau ${etat.niveau+1} – ${etat.theme}`;
+  $('zone').innerHTML='';
+  parle(n.consigne);
+
+  if(n.type==='tap'){
+    n.items.forEach(it=>{
+      const d=document.createElement('div');
+      d.className='card';
+      d.textContent=it;
+      d.onclick=()=>valide(it===n.bon);
+      $('zone').appendChild(d);
+    });
+  }
+  if(n.type==='tri'){
+    etat.tri=[];
+    n.items.forEach(it=>{
+      const d=document.createElement('div');
+      d.className='card';
+      d.textContent=it;
+      d.onclick=()=>{
+        d.style.visibility='hidden';
+        etat.tri.push(it);
+        if(etat.tri.length===n.bon.length){
+          valide(JSON.stringify(etat.tri)===JSON.stringify(n.bon));
+        }
+      };
+      $('zone').appendChild(d);
+    });
+  }
+  if(n.type==='calc'){
+    const q=document.createElement('div');
+    q.style.width='100%';q.style.textAlign='center';q.style.fontSize='6vmin';
+    q.textContent=n.consigne;
+    $('zone').appendChild(q);
+    n.items.forEach(it=>{
+      const d=document.createElement('div');
+      d.className='card';
+      d.textContent=it;
+      d.onclick=()=>valide(it===n.bon);
+      $('zone').appendChild(d);
+    });
+  }
+  if(n.type==='memo'){
+    const q=document.createElement('div');
+    q.style.width='100%';q.style.textAlign='center';q.style.fontSize='6vmin';
+    q.textContent=n.consigne;
+    $('zone').appendChild(q);
+
+    const dispo = [...n.items].sort(()=>Math.random()-.5);
+    dispo.forEach(it=>{
+      const d=document.createElement('div');
+      d.className='card';
+      d.textContent='❓';
+      d.dataset.v=it;
+      d.onclick=()=>valide(it===n.bon);
+      $('zone').appendChild(d);
+    });
+    setTimeout(()=>{
+      [...$('zone').children].forEach(c=>{
+        if(c.dataset.v) c.textContent=c.dataset.v;
+      });
+      setTimeout(()=>{
+        [...$('zone').children].forEach(c=>{
+          if(c.dataset.v) c.textContent='❓';
+        });
+      },1000);
+    },500);
+  }
+}
+
+function valide(ok){
+  if(ok){
+    etat.etoiles[etat.theme]=1;
+    sauve();
+    afficheMessage('⭐ Gagné !',()=>{
+      etat.niveau=(etat.niveau+1)%THEMES[etat.theme].length;
+      if(etat.niveau===0) afficheMessage(`🏆 Thème ${etat.theme} terminé !`,choixTheme);
+      else lanceNiveau();
+    });
+  }else{
+    afficheMessage('Essaye encore',()=>lanceNiveau());
+  }
+}
+
+/* ---------- DÉMARRAGE ---------- */
+choixTheme();
+</script>
+</body>
+</html>

@@ -19,6 +19,13 @@
 </style>
 </head>
 <body>
+
+<!-- ÉCRAN DE DÉMARRAGE -->
+<div id="start" style="position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bleu);display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff;font-size:7vmin;z-index:999">
+  Choisis ton thème :
+  <div id="themeZone" style="display:flex;gap:20px;margin-top:20px"></div>
+</div>
+
 <div id="screen">
   <header id="title">Explorateurs 6 ans</header>
   <div id="zone"></div>
@@ -28,19 +35,19 @@
 <script>
 /* ---------- 50 NIVEAUX ---------- */
 const niveaux = [
-  /* ANIMAUX – 10 niveaux */
+  /* ANIMAUX – 10 */
   {theme:'🐯 Animaux',type:'tap', consigne:'Touche le chat', items:['🐶','🐱','🐭'], bon:'🐱'},
   {theme:'🐯 Animaux',type:'tap', consigne:'Touche le dauphin', items:['🦈','🐬','🐠'], bon:'🐬'},
   {theme:'🐯 Animaux',type:'tap', consigne:'Touche le panda', items:['🐻','🐼','🦝'], bon:'🐼'},
   {theme:'🐯 Animaux',type:'tri', consigne:'Clique les animaux du plus petit au plus grand', items:['🐘','🐀','🐄'], bon:['🐀','🐄','🐘']},
   {theme:'🐯 Animaux',type:'tri', consigne:'Mets les oiseaux du plus léger au plus lourd', items:['🦅','🐧','🦢'], bon:['🐧','🦢','🦅']},
   {theme:'🐯 Animaux',type:'calc', consigne:'3 chats + 2 chats = ?', items:['4','5','6'], bon:'5'},
-  {theme:'🐯 Animaux',type:'calc', consigne:'Il y a 4 chiots, 3 partent, il reste ?', items:['1','2','3'], bon:'1'},
-  {theme:'🐯 Animaux',type:'memo', consigne:'Retrouve l’animal caché !', items:['🐶','🐱','🐭','🐹'], bon:'🐱'},
+  {theme:'🐯 Animaux',type:'calc', consigne:'4 chiots – 3 partent = ?', items:['1','2','3'], bon:'1'},
+  {theme:'🐯 Animaux',type:'memo', consigne:'Retrouve l’animal caché', items:['🐶','🐱','🐭','🐹'], bon:'🐱'},
   {theme:'🐯 Animaux',type:'memo', consigne:'Retrouve le reptile', items:['🐸','🐢','🐍','🦎'], bon:'🐍'},
   {theme:'🐯 Animaux',type:'tap', consigne:'Touche l’animal qui pond des œufs', items:['🐓','🐄','🐕'], bon:'🐓'},
 
-  /* ESPACE – 10 niveaux */
+  /* ESPACE – 10 */
   {theme:'🚀 Espace',type:'tap', consigne:'Touche la planète rouge', items:['🪐','🌍','🔴'], bon:'🔴'},
   {theme:'🚀 Espace',type:'tap', consigne:'Touche la comète', items:['⭐','☄️','🌙'], bon:'☄️'},
   {theme:'🚀 Espace',type:'tri', consigne:'Mets les astres du plus chaud au plus froid', items:['☀️','🌍','❄️'], bon:['☀️','🌍','❄️']},
@@ -49,157 +56,10 @@ const niveaux = [
   {theme:'🚀 Espace',type:'memo', consigne:'Retrouve la galaxie', items:['🌌','🌠','🌍','🪐'], bon:'🌌'},
   {theme:'🚀 Espace',type:'tap', consigne:'Touche l’astronaute', items:['👩‍🚀','🛸','🌕'], bon:'👩‍🚀'},
   {theme:'🚀 Espace',type:'tri', consigne:'Mets les objets du plus petit au plus grand', items:['🛰️','🚀','🌌'], bon:['🛰️','🚀','🌌']},
-  {theme:'🚀 Espace',type:'calc', consigne:'Il y avait 7 étoiles, 2 ont explosé, reste ?', items:['4','5','6'], bon:'5'},
+  {theme:'🚀 Espace',type:'calc', consigne:'7 étoiles – 2 explosent = ?', items:['4','5','6'], bon:'5'},
   {theme:'🚀 Espace',type:'memo', consigne:'Retrouve la lune', items:['🌑','🌒','🌓','🌕'], bon:'🌕'},
 
-  /* VILLE – 10 niveaux */
+  /* VILLE – 10 */
   {theme:'🏪 Ville',type:'tap', consigne:'Touche le feu rouge', items:['🚦','🛑','⚠️'], bon:'🚦'},
   {theme:'🏪 Ville',type:'tap', consigne:'Touche l’hôpital', items:['🏥','🏨','🏢'], bon:'🏥'},
-  {theme:'🏪 Ville',type:'tri', consigne:'Mets les véhicules du plus lent au plus rapide', items:['🚲','🚗','✈️'], bon:['🚲','🚗','✈️']},
-  {theme:'🏪 Ville',type:'calc', consigne:'4 bus + 3 bus = ?', items:['6','7','8'], bon:'7'},
-  {theme:'🏪 Ville',type:'calc', consigne:'9 pains – 3 pains = ?', items:['5','6','7'], bon:'6'},
-  {theme:'🏪 Ville',type:'memo', consigne:'Retrouve le boulanger', items:['👨‍🍳','👩‍🌾','👨‍🍞','👷'], bon:'👨‍🍞'},
-  {theme:'🏪 Ville',type:'tap', consigne:'Touche le camion de pompiers', items:['🚒','🚓','🚑'], bon:'🚒'},
-  {theme:'🏪 Ville',type:'tap', consigne:'Touche la maison', items:['🏠','🏭','🏢'], bon:'🏠'},
-  {theme:'🏪 Ville',type:'tri', consigne:'Mets les métiers du plus tôt au plus tard dans la journée', items:['👩‍🍳','👮','👩‍🎨'], bon:['👩‍🍳','👮','👩‍🎨']},
-  {theme:'🏪 Ville',type:'calc', consigne:'5 livreurs + 0 livreurs = ?', items:['4','5','6'], bon:'5'},
-
-  /* NATURE – 10 niveaux */
-  {theme:'🌱 Nature',type:'tap', consigne:'Touche l’arbre', items:['🌳','🌲','🌴'], bon:'🌳'},
-  {theme:'🌱 Nature',type:'tap', consigne:'Touche la fleur', items:['🌷','🌿','🌱'], bon:'🌷'},
-  {theme:'🌱 Nature',type:'tri', consigne:'Mets les saisons dans l’ordre', items:['🍂','☀️','❄️'], bon:['☀️','🍂','❄️']},
-  {theme:'🌱 Nature',type:'calc', consigne:'6 graines + 4 graines = ?', items:['9','10','11'], bon:'10'},
-  {theme:'🌱 Nature',type:'calc', consigne:'12 feuilles – 7 feuilles = ?', items:['4','5','6'], bon:'5'},
-  {theme:'🌱 Nature',type:'memo', consigne:'Retrouve le fruit rouge', items:['🍓','🍌','🍇','🍉'], bon:'🍓'},
-  {theme:'🌱 Nature',type:'tap', consigne:'Touche le soleil', items:['☀️','🌤️','🌦️'], bon:'☀️'},
-  {theme:'🌱 Nature',type:'tri', consigne:'Mets les mois du printemps', items:['🌸','🌞','🍂'], bon:['🌸','🌞']},
-  {theme:'🌱 Nature',type:'calc', consigne:'3 pommes + 2 poires = ? fruits', items:['4','5','6'], bon:'5'},
-  {theme:'🌱 Nature',type:'memo', consigne:'Retrouve la lune', items:['🌑','🌒','🌓','🌕'], bon:'🌕'},
-
-  /* TRANSPORTS – 10 niveaux */
-  {theme:'🚂 Transports',type:'tap', consigne:'Touche le train', items:['🚂','🚌','🚁'], bon:'🚂'},
-  {theme:'🚂 Transports',type:'tap', consigne:'Touche le bateau', items:['🛳️','⛵','🚤'], bon:'⛵'},
-  {theme:'🚂 Transports',type:'tri', consigne:'Mets les véhicules du plus léger au plus lourd', items:['🛴','🚲','🚚'], bon:['🛴','🚲','🚚']},
-  {theme:'🚂 Transports',type:'calc', consigne:'4 avions + 3 avions = ?', items:['6','7','8'], bon:'7'},
-  {theme:'🚂 Transports',type:'calc', consigne:'10 vélos – 4 vélos = ?', items:['5','6','7'], bon:'6'},
-  {theme:'🚂 Transports',type:'memo', consigne:'Retrouve le scooter', items:['🛵','🏍️','🚲','🚗'], bon:'🛵'},
-  {theme:'🚂 Transports',type:'tap', consigne:'Touche l’hélicoptère', items:['🚁','✈️','🛸'], bon:'🚁'},
-  {theme:'🚂 Transports',type:'tap', consigne:'Touche le sous-marin', items:['🛳️','🚤','🚢'], bon:'🚢'},
-  {theme:'🚂 Transports',type:'tri', consigne:'Mets les transports du plus ancien au plus moderne', items:['🚂','🚗','🚀'], bon:['🚂','🚗','🚀']},
-  {theme:'🚂 Transports',type:'calc', consigne:'9 cars + 0 cars = ?', items:['8','9','10'], bon:'9'}
-];
-
-/* ---------- LOGIQUE ---------- */
-let etat = JSON.parse(localStorage.getItem('progres')) || {niveau:0,etoiles:Array(niveaux.length).fill(0)};
-const totalNiveaux = niveaux.length;
-
-const $ = id => document.getElementById(id);
-function parle(txt){
-  speechSynthesis.cancel();
-  speechSynthesis.speak(new SpeechSynthesisUtterance(txt));
-}
-function sauve(){
-  localStorage.setItem('progres',JSON.stringify(etat));
-}
-
-/* ---------- AFFICHAGE ---------- */
-function afficheMessage(html,cb){
-  $('msg').innerHTML = html + '<br><button onclick="suite()">OK</button>';
-  $('msg').classList.remove('hidden');
-  function suite(){ $('msg').classList.add('hidden'); cb(); }
-}
-
-function lanceNiveau(){
-  const n = niveaux[etat.niveau];
-  $('title').textContent = `Niveau ${etat.niveau+1} / ${totalNiveaux} – ${n.theme}`;
-  $('zone').innerHTML='';
-  parle(n.consigne);
-
-  if(n.type==='tap'){
-    n.items.forEach(it=>{
-      const d=document.createElement('div');
-      d.className='card';
-      d.textContent=it;
-      d.onclick=()=>valide(it===n.bon);
-      $('zone').appendChild(d);
-    });
-  }
-  if(n.type==='tri'){
-    etat.tri=[];
-    n.items.forEach(it=>{
-      const d=document.createElement('div');
-      d.className='card';
-      d.textContent=it;
-      d.onclick=()=>{
-        d.style.visibility='hidden';
-        etat.tri.push(it);
-        if(etat.tri.length===n.bon.length){
-          valide(JSON.stringify(etat.tri)===JSON.stringify(n.bon));
-        }
-      };
-      $('zone').appendChild(d);
-    });
-  }
-  if(n.type==='calc'){
-    const q=document.createElement('div');
-    q.style.width='100%';q.style.textAlign='center';q.style.fontSize='6vmin';
-    q.textContent=n.consigne;
-    $('zone').appendChild(q);
-    n.items.forEach(it=>{
-      const d=document.createElement('div');
-      d.className='card';
-      d.textContent=it;
-      d.onclick=()=>valide(it===n.bon);
-      $('zone').appendChild(d);
-    });
-  }
-  if(n.type==='memo'){
-    const q=document.createElement('div');
-    q.style.width='100%';q.style.textAlign='center';q.style.fontSize='6vmin';
-    q.textContent=n.consigne;
-    $('zone').appendChild(q);
-
-    const dispo = [...n.items].sort(()=>Math.random()-.5);
-    dispo.forEach(it=>{
-      const d=document.createElement('div');
-      d.className='card';
-      d.textContent='❓';
-      d.dataset.v=it;
-      d.onclick=()=>valide(it===n.bon);
-      $('zone').appendChild(d);
-    });
-    setTimeout(()=>{
-      [...$('zone').children].forEach(c=>{
-        if(c.dataset.v) c.textContent=c.dataset.v;
-      });
-      setTimeout(()=>{
-        [...$('zone').children].forEach(c=>{
-          if(c.dataset.v) c.textContent='❓';
-        });
-      },1000);
-    },500);
-  }
-}
-
-function valide(ok){
-  if(ok){
-    etat.etoiles[etat.niveau]=1;
-    sauve();
-    const star=document.createElement('div');
-    star.textContent='⭐';star.style.fontSize='20vmin';star.style.animation='pop .5s';
-    document.body.appendChild(star);
-    setTimeout(()=>star.remove(),800);
-    afficheMessage('Gagné !',()=>{
-      etat.niveau=(etat.niveau+1)%totalNiveaux;
-      if(etat.niveau===0) afficheMessage('🏆 Tous les niveaux finis !',lanceNiveau);
-      else lanceNiveau();
-    });
-  }else{
-    afficheMessage('Essaye encore',lanceNiveau);
-  }
-}
-
-lanceNiveau();
-</script>
-</body>
-</html>
+  {theme:'🏪 Ville',type:'tri', consigne:'Mets les véhicules du plus lent au plus rapide', items:['🚲','🚗','✈️'], bon:['🚲','🚗','

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"/>
+<title>Explorateurs 6 ans – 50 niveaux</title>
+<style>
+  :root{
+    --bleu:#3F8CFF;
+    --rose:#FF5C8D;
+    --vert:#00C896;
+    --jaune:#FFB400;
+    --violet:#8A5CFF;
+    --bg:#F3F7FF;
+  }
+  *{box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
+  body{margin:0;background:var(--bg);overflow:hidden}
+  #screen{height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  header{position:absolute;top:0;left:0;right:0;height:56px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.1);display:flex;align-items:center;justify-content:center;font-size:5vmin;color:var(--bleu)}
+  #zone{flex:1;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:4vmin;padding:20px}
+  .card{width:28vmin;height:28vmin;border-radius:18px;box-shadow:0 6px 20px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;font-size:13vmin;cursor:pointer;transition:transform .3s}
+  .card:active{transform:scale(.92)}
+  .hidden{display:none}
+  #msg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:20px;padding:25px;box-shadow:0 8px 30px rgba(0,0,0,.25);text-align:center;font-size:5vmin}
+  button{margin-top:15px;padding:12px 24px;border:none;border-radius:12px;background:var(--bleu);color:#fff;font-size:4vmin}
+  #stars{font-size:7vmin;margin:5px}
+  @keyframes pop{0%{transform:scale(.5) rotate(-12deg)}60%{transform:scale(1.2) rotate(6deg)}100%{transform:scale(1) rotate(0)}}
+  .pop{animation:pop .5s forwards}
+</style>
+</head>
+<body>
+<div id="screen">
+  <header id="title">Explorateurs 6 ans</header>
+  <div id="zone"></div>
+  <div id="msg" class="hidden"></div>
+</div>
+
+<script>
+/* ---------- 50 NIVEAUX ---------- */
+/* Chaque entrée : {type, consigne, items, bon} */
+const niveaux = [
+  /* ANIMAUX – 10 niveaux */
+  {theme:'🐯 Animaux',type:'tap', consigne:'Touche le chat', items:['🐶','🐱','🐭'], bon:'🐱'},
+  {theme:'🐯 Animaux',type:'tap', consigne:'Touche le dauphin', items:['🦈','🐬','🐠'], bon:'🐬'},
+  {theme:'🐯 Animaux',type:'tap', consigne:'Touche le panda', items:['🐻','🐼','🦝'], bon:'🐼'},
+  {theme:'🐯 Animaux',type:'tri', consigne:'Clique les animaux du plus petit au plus grand', items:['🐘','🐀','🐄'], bon:['🐀','🐄','🐘']},
+  {theme:'🐯 Animaux',type:'tri', consigne:'Mets les oiseaux du plus léger au plus lourd', items:['🦅','🐧','🦢'], bon:['🐧','🦢','🦅']},
+  {theme:'🐯 Animaux',type:'calc', consigne:'3 chats + 2 chats = ?', items:['4','5','6'], bon:'5'},
+  {theme:'🐯 Animaux',type:'calc', consigne:'Il y a 4 chiots, 3 partent, il reste ?', items:['1','2','3'], bon:'1'},
+  {theme:'🐯 Animaux',type:'memo', consigne:'Retrouve l’animal caché !', items:['🐶','🐱','🐭','🐹'], bon:'🐱'},
+  {theme:'🐯 Animaux',type:'memo', consigne:'Retrouve le reptile', items:['🐸','🐢','🐍','🦎'], bon:'🐍'},
+  {theme:'🐯 Animaux',type:'tap', consigne:'Touche l’animal qui pond des œufs', items:['🐓','🐄','🐕'], bon:'🐓'},
+
+  /* ESPACE – 10 niveaux */
+  {theme:'🚀 Espace',type:'tap', consigne:'Touche la planète rouge', items:['🪐','🌍','🔴'], bon:'🔴'},
+  {theme:'🚀 Espace',type:'tap', consigne:'Touche la comète', items:['⭐','☄️','🌙'], bon:'☄️'},
+  {theme:'🚀 Espace',type:'tri', consigne:'Mets les astres du plus chaud au plus froid', items:['☀️','🌍','❄️'], bon:['☀️','🌍','❄️']},
+  {theme:'🚀 Espace',type:'calc', consigne:'9 planètes – 5 planètes = ?', items:['3','4','5'], bon:'4'},
+  {theme:'🚀 Espace',type:'calc', consigne:'2 fusées + 3 fusées = ?', items:['4','5','6'], bon:'5'},
+  {theme:'🚀 Espace',type:'memo', consigne:'Retrouve la galaxie', items:['🌌','🌠','🌍','🪐'], bon:'🌌'},
+  {theme:'🚀 Espace',type:'tap', consigne:'Touche l’astronaute', items:['👩‍🚀','🛸','🌕'], bon:'👩‍🚀'},
+  {theme:'🚀 Espace',type:'tri', consigne:'Mets les objets du plus petit au plus grand', items:['🛰️','🚀','🌌'], bon:['🛰️','🚀','🌌']},
+  {theme:'🚀 Espace',type:'calc', consigne:'Il y avait 7 étoiles, 2 ont explosé, reste ?', items:['4','5','6'], bon:'5'},
+  {theme:'🚀 Espace',type:'memo', consigne:'Retrouve la lune', items:['🌑','🌒','🌓','🌕'], bon:'🌕'},
+
+  /* VILLE – 10 niveaux */
+  {theme:'🏪 Ville',type:'tap', consigne:'Touche le feu rouge', items:['🚦','🛑','⚠️'], bon:'🚦'},
+  {theme:'🏪 Ville',type:'tap', consigne:'Touche l’hôpital', items:['🏥','🏨','🏢'], bon:'🏥'},
+  {theme:'🏪 Ville',type:'tri', consigne:'Mets les véhicules du plus lent au plus rapide', items:['🚲','🚗','✈️'], bon:['🚲','🚗','✈️']},
+  {theme:'🏪 Ville',type:'calc', consigne:'4 bus + 3 bus = ?', items:['6','7','8'], bon:'7'},
+  {theme:'🏪 Ville',type:'calc', consigne:'9 pains – 3 pains = ?', items:['5','6','7'], bon:'6'},
+  {theme:'🏪 Ville',type:'memo', consigne:'Retrouve le boulanger', items:['👨‍🍳','👩‍🌾','👨‍🍞','👷'], bon:'👨‍🍞'},
+  {theme:'🏪 Ville',type:'tap', consigne:'Touche le camion de pompiers', items:['🚒','🚓','🚑'], bon:'🚒'},
+  {theme:'🏪 Ville',type:'tap', consigne:'Touche la maison', items:['🏠','🏭','🏢'], bon:'🏠'},
+  {theme:'🏪 Ville',type:'tri', consigne:'Mets les métiers du plus tôt au plus tard dans la journée', items:['👩‍🍳','👮','👩‍🎨'], bon:['👩‍🍳','👮','👩‍🎨']},
+  {theme:'🏪 Ville',type:'calc', consigne:'5 livreurs + 0 livreurs = ?', items:['4','5','6'], bon:'5'},
+
+  /* NATURE – 10 niveaux */
+  {theme:'🌱 Nature',type:'tap', consigne:'Touche l’arbre', items:['🌳','🌲','🌴'], bon:'🌳'},
+  {theme:'🌱 Nature',type:'tap', consigne:'Touche la fleur', items:['🌷','🌿','🌱'], bon:'🌷'},
+  {theme:'🌱 Nature',type:'tri', consigne:'Mets les saisons dans l’ordre', items:['🍂','☀️','❄️'], bon:['☀️','🍂','❄️']},
+  {theme:'🌱 Nature',type:'calc', consigne:'6 graines + 4 graines = ?', items:['9','10','11'], bon:'10'},
+  {theme:'🌱 Nature',type:'calc', consigne:'12 feuilles – 7 feuilles = ?', items:['4','5','6'], bon:'5'},
+  {theme:'🌱 Nature',type:'memo', consigne:'Retrouve le fruit rouge', items:['🍓','🍌','🍇','🍉'], bon:'🍓'},
+  {theme:'🌱 Nature',type:'tap', consigne:'Touche le soleil', items:['☀️','🌤️','🌦️'], bon:'☀️'},
+  {theme:'🌱 Nature',type:'tri', consigne:'Mets les mois du printemps', items:['🌸','🌞','🍂'], bon:['🌸','🌞']},
+  {theme:'🌱 Nature',type:'calc', consigne:'3 pommes + 2 poires = ? fruits', items:['4','5','6'], bon:'5'},
+  {theme:'🌱 Nature',type:'memo', consigne:'Retrouve la lune', items:['🌑','🌒','🌓','🌕'], bon:'🌕'},
+
+  /* TRANSPORTS – 10 niveaux */
+  {theme:'🚂 Transports',type:'tap', consigne:'Touche le train', items:['🚂','🚌','🚁'], bon:'🚂'},
+  {theme:'🚂 Transports',type:'tap', consigne:'Touche le bateau', items:['🛳️','⛵','🚤'], bon:'⛵'},
+  {theme:'🚂 Transports',type:'tri', consigne:'Mets les véhicules du plus léger au plus lourd', items:['🛴','🚲','🚚'], bon:['🛴','🚲','🚚']},
+  {theme:'🚂 Transports',type:'calc', consigne:'4 avions + 3 avions = ?', items:['6','7','8'], bon:'7'},
+  {theme:'🚂 Transports',type:'calc', consigne:'10 vélos – 4 vélos = ?', items:['5','6','7'], bon:'6'},
+  {theme:'🚂 Transports',type:'memo', consigne:'Retrouve le scooter', items:['🛵','🏍️','🚲','🚗'], bon:'🛵'},
+  {theme:'🚂 Transports',type:'tap', consigne:'Touche le hélicoptère', items:['🚁','✈️','🛸'], bon:'🚁'},
+  {theme:'🚂 Transports',type:'tap', consigne:'Touche le sous-marin', items:['🛳️','🚤','🚢'], bon:'🚢'},
+  {theme:'🚂 Transports',type:'tri', consigne:'Mets les transports du plus ancien au plus moderne', items:['🚂','🚗','🚀'], bon:['🚂','🚗','🚀']},
+  {theme:'🚂 Transports',type:'calc', consigne:'9 cars + 0 cars = ?', items:['8','9','10'], bon:'9'}
+];
+
+/* ---------- ÉTAT ---------- */
+let etat = JSON.parse(localStorage.getItem('progres')) || {niveau:0,etoiles:Array(niveaux.length).fill(0)};
+const totalNiveaux = niveaux.length;
+
+/* ---------- UTILITAIRES ---------- */
+const $ = id => document.getElementById(id);
+function parle(txt){
+  speechSynthesis.cancel();
+  speechSynthesis.speak(new SpeechSynthesisUtterance(txt));
+}
+function sauve(){
+  localStorage.setItem('progres',JSON.stringify(etat));
+}
+
+/* ---------- AFFICHAGE ---------- */
+function afficheMessage(html,cb){
+  $('msg').innerHTML = html + '<br><button onclick="suite()">OK</button>';
+  $('msg').classList.remove('hidden');
+  function suite(){ $('msg').classList.add('hidden'); cb(); }
+}
+
+function lanceNiveau(){
+  const n = niveaux[etat.niveau];
+  $('title').textContent = `Niveau ${etat.niveau+1} / ${totalNiveaux}`;
+  $('zone').innerHTML='';
+  parle(n.consigne);
+
+  /* TAP */
+  if(n.type==='tap'){
+    n.items.forEach(it=>{
+      const d=document.createElement('div');
+      d.className='card';
+      d.textContent=it;
+      d.onclick=()=>valide(it===n.bon);
+      $('zone').appendChild(d);
+    });
+  }
+  /* TRI */
+  if(n.type==='tri'){
+    etat.tri=[];
+    n.items.forEach(it=>{
+      const d=document.createElement('div');
+      d.className='card';
+      d.textContent=it;
+      d.onclick=()=>{
+        d.style.visibility='hidden';
+        etat.tri.push(it);
+        if(etat.tri.length===n.bon.length){
+          valide(JSON.stringify(etat.tri)===JSON.stringify(n.bon));
+        }
+      };
+      $('zone').appendChild(d);
+    });
+  }
+  /* CALC */
+  if(n.type==='calc'){
+    const q=document.createElement('div');
+    q.style.width='100%';q.style.textAlign='center';q.style.fontSize='6vmin';
+    q.textContent=n.consigne;
+    $('zone').appendChild(q);
+    n.items.forEach(it=>{
+      const d=document.createElement('div');
+      d.className='card';
+      d.textContent=it;
+      d.onclick=()=>valide(it===n.bon);
+      $('zone').appendChild(d);
+    });
+  }
+  /* MEMO */
+  if(n.type==='memo'){
+    const q=document.createElement('div');
+    q.style.width='100%';q.style.textAlign='center';q.style.fontSize='6vmin';
+    q.textContent=n.consigne;
+    $('zone').appendChild(q);
+
+    const dispo = [...n.items].sort(()=>Math.random()-.5);
+    dispo.forEach(it=>{
+      const d=document.createElement('div');
+      d.className='card';
+      d.textContent='❓';
+      d.onclick=()=>valide(it===n.bon);
+      d.dataset.v=it;
+      $('zone').appendChild(d);
+    });
+    /* révélation 1 seconde */
+    setTimeout(()=>{
+      [...$('zone').children].forEach(c=>{
+        if(c.dataset.v) c.textContent=c.dataset.v;
+      });
+      setTimeout(()=>{
+        [...$('zone').children].forEach(c=>{
+          if(c.dataset.v) c.textContent='❓';
+        });
+      },1000);
+    },500);
+  }
+}
+
+function valide(ok){
+  if(ok){
+    etat.etoiles[etat.niveau]=1;
+    sauve();
+    const star=document.createElement('div');
+    star.textContent='⭐';star.className='pop';star.style.fontSize='20vmin';
+    document.body.appendChild(star);
+    setTimeout(()=>star.remove(),800);
+    afficheMessage('Gagné !',()=>{
+      etat.niveau=(etat.niveau+1)%totalNiveaux;
+      if(etat.niveau===0) afficheMessage('🏆 Tous les niveaux finis !',()=>lanceNiveau());
+      else lanceNiveau();
+    });
+  }else{
+    afficheMessage('Essaye encore',lanceNiveau);
+  }
+}
+
+lanceNiveau();
+</script>
+</body>
+</html>

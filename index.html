@@ -1,18 +1,11 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"/>
 <title>Explorateurs 6 ans – 50 niveaux</title>
 <style>
-  :root{
-    --bleu:#3F8CFF;
-    --rose:#FF5C8D;
-    --vert:#00C896;
-    --jaune:#FFB400;
-    --violet:#8A5CFF;
-    --bg:#F3F7FF;
-  }
+  :root{--bleu:#3F8CFF;--rose:#FF5C8D;--vert:#00C896;--jaune:#FFB400;--violet:#8A5CFF;--bg:#F3F7FF}
   *{box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
   body{margin:0;background:var(--bg);overflow:hidden}
   #screen{height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
@@ -23,9 +16,6 @@
   .hidden{display:none}
   #msg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:20px;padding:25px;box-shadow:0 8px 30px rgba(0,0,0,.25);text-align:center;font-size:5vmin}
   button{margin-top:15px;padding:12px 24px;border:none;border-radius:12px;background:var(--bleu);color:#fff;font-size:4vmin}
-  #stars{font-size:7vmin;margin:5px}
-  @keyframes pop{0%{transform:scale(.5) rotate(-12deg)}60%{transform:scale(1.2) rotate(6deg)}100%{transform:scale(1) rotate(0)}}
-  .pop{animation:pop .5s forwards}
 </style>
 </head>
 <body>
@@ -37,7 +27,6 @@
 
 <script>
 /* ---------- 50 NIVEAUX ---------- */
-/* Chaque entrée : {type, consigne, items, bon} */
 const niveaux = [
   /* ANIMAUX – 10 niveaux */
   {theme:'🐯 Animaux',type:'tap', consigne:'Touche le chat', items:['🐶','🐱','🐭'], bon:'🐱'},
@@ -94,17 +83,16 @@ const niveaux = [
   {theme:'🚂 Transports',type:'calc', consigne:'4 avions + 3 avions = ?', items:['6','7','8'], bon:'7'},
   {theme:'🚂 Transports',type:'calc', consigne:'10 vélos – 4 vélos = ?', items:['5','6','7'], bon:'6'},
   {theme:'🚂 Transports',type:'memo', consigne:'Retrouve le scooter', items:['🛵','🏍️','🚲','🚗'], bon:'🛵'},
-  {theme:'🚂 Transports',type:'tap', consigne:'Touche le hélicoptère', items:['🚁','✈️','🛸'], bon:'🚁'},
+  {theme:'🚂 Transports',type:'tap', consigne:'Touche l’hélicoptère', items:['🚁','✈️','🛸'], bon:'🚁'},
   {theme:'🚂 Transports',type:'tap', consigne:'Touche le sous-marin', items:['🛳️','🚤','🚢'], bon:'🚢'},
   {theme:'🚂 Transports',type:'tri', consigne:'Mets les transports du plus ancien au plus moderne', items:['🚂','🚗','🚀'], bon:['🚂','🚗','🚀']},
   {theme:'🚂 Transports',type:'calc', consigne:'9 cars + 0 cars = ?', items:['8','9','10'], bon:'9'}
 ];
 
-/* ---------- ÉTAT ---------- */
+/* ---------- LOGIQUE ---------- */
 let etat = JSON.parse(localStorage.getItem('progres')) || {niveau:0,etoiles:Array(niveaux.length).fill(0)};
 const totalNiveaux = niveaux.length;
 
-/* ---------- UTILITAIRES ---------- */
 const $ = id => document.getElementById(id);
 function parle(txt){
   speechSynthesis.cancel();
@@ -123,11 +111,10 @@ function afficheMessage(html,cb){
 
 function lanceNiveau(){
   const n = niveaux[etat.niveau];
-  $('title').textContent = `Niveau ${etat.niveau+1} / ${totalNiveaux}`;
+  $('title').textContent = `Niveau ${etat.niveau+1} / ${totalNiveaux} – ${n.theme}`;
   $('zone').innerHTML='';
   parle(n.consigne);
 
-  /* TAP */
   if(n.type==='tap'){
     n.items.forEach(it=>{
       const d=document.createElement('div');
@@ -137,7 +124,6 @@ function lanceNiveau(){
       $('zone').appendChild(d);
     });
   }
-  /* TRI */
   if(n.type==='tri'){
     etat.tri=[];
     n.items.forEach(it=>{
@@ -154,7 +140,6 @@ function lanceNiveau(){
       $('zone').appendChild(d);
     });
   }
-  /* CALC */
   if(n.type==='calc'){
     const q=document.createElement('div');
     q.style.width='100%';q.style.textAlign='center';q.style.fontSize='6vmin';
@@ -168,7 +153,6 @@ function lanceNiveau(){
       $('zone').appendChild(d);
     });
   }
-  /* MEMO */
   if(n.type==='memo'){
     const q=document.createElement('div');
     q.style.width='100%';q.style.textAlign='center';q.style.fontSize='6vmin';
@@ -180,11 +164,10 @@ function lanceNiveau(){
       const d=document.createElement('div');
       d.className='card';
       d.textContent='❓';
-      d.onclick=()=>valide(it===n.bon);
       d.dataset.v=it;
+      d.onclick=()=>valide(it===n.bon);
       $('zone').appendChild(d);
     });
-    /* révélation 1 seconde */
     setTimeout(()=>{
       [...$('zone').children].forEach(c=>{
         if(c.dataset.v) c.textContent=c.dataset.v;
@@ -203,12 +186,12 @@ function valide(ok){
     etat.etoiles[etat.niveau]=1;
     sauve();
     const star=document.createElement('div');
-    star.textContent='⭐';star.className='pop';star.style.fontSize='20vmin';
+    star.textContent='⭐';star.style.fontSize='20vmin';star.style.animation='pop .5s';
     document.body.appendChild(star);
     setTimeout(()=>star.remove(),800);
     afficheMessage('Gagné !',()=>{
       etat.niveau=(etat.niveau+1)%totalNiveaux;
-      if(etat.niveau===0) afficheMessage('🏆 Tous les niveaux finis !',()=>lanceNiveau());
+      if(etat.niveau===0) afficheMessage('🏆 Tous les niveaux finis !',lanceNiveau);
       else lanceNiveau();
     });
   }else{
